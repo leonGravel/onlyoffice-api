@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <title>ONLYOFFICE</title>
+        <link rel="icon" type="image/x-icon" th:href="@{/image/favicon.ico}" />
+        <link rel="stylesheet" type="text/css" th:href="@{/css/editor.css}" />
+
+        <script type="text/javascript" th:src="@{${docserviceApiUrl}}"></script>
+
+        <script th:inline="javascript">
+        /*<![CDATA[*/
+        var docEditor;
+
+        var innerAlert = function (message) {
+            if (console && console.log)
+                console.log(message);
+        };
+
+        var onReady = function () {
+            innerAlert("Document editor ready");
+        };
+
+        var onDocumentStateChange = function (event) {
+            var title = document.title.replace(/\*$/g, "");
+            document.title = title + (event.data ? "*" : "");
+        };
+
+        var onRequestEditRights = function () {
+            location.href = location.href.replace(RegExp("mode=view\&?", "i"), "");
+        };
+
+        var onError = function (event) {
+            if (event)
+                innerAlert(event.data);
+        };
+
+        var onOutdatedVersion = function (event) {
+            location.reload(true);
+        };
+
+        var сonnectEditor = function () {
+            var config =[[${config}]];
+            config.width = "100%";
+            config.height = "100%";
+            config.editorConfig.lang = "zh-CN";//"en-US",汉化
+            config.events = {
+                    "onReady": onReady,
+                    "onDocumentStateChange": onDocumentStateChange,
+                    'onRequestEditRights': onRequestEditRights,
+                    "onError": onError,
+                    "onOutdatedVersion": onOutdatedVersion,
+                };
+
+            docEditor = new DocsAPI.DocEditor("iframeEditor", config);
+            
+        };
+
+        if (window.addEventListener) {
+            window.addEventListener("load", сonnectEditor);
+        } else if (window.attachEvent) {
+            window.attachEvent("load", сonnectEditor);
+        }
+        /*]]>*/
+    </script>
+
+    </head>
+    <body>
+        <div class="form">
+            <div id="iframeEditor"></div>
+        </div>
+    </body>
+</html>
